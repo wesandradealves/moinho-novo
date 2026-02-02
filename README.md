@@ -20,6 +20,7 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 - A ativacao automatica usa `OXYGEN_LICENSE_KEY` via MU plugin (arquivo em `mu-plugins/`).
 - O entrypoint tenta instalar o Oxygen no runtime se existir `OXYGEN_ZIP_PATH` (arquivo local) ou `OXYGEN_ZIP_URL` (URL direta).
 - Se o banco estiver vazio, o entrypoint importa automaticamente `db.sql` e faz flush de permalinks.
+- Se ainda nao houver templates do Oxygen, o site usa o tema `moinho-novo` automaticamente (fallback via MU plugin). Assim que houver templates/ct_builder_json, o Oxygen assume o render.
 
 ## Healthchecks e testes
 - O `docker-compose.yml` inclui healthcheck do WordPress (wp-login).

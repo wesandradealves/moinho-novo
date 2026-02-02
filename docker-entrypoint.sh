@@ -126,6 +126,53 @@ install_oxygen_plugin() {
     chown -R www-data:www-data "${plugin_root}"
 }
 
+install_contact_form_7_plugin() {
+    local zip_source=""
+    local cleanup_zip=0
+
+    if [ -n "${CONTACT_FORM_7_ZIP_PATH:-}" ] && [ -f "${CONTACT_FORM_7_ZIP_PATH}" ]; then
+        zip_source="${CONTACT_FORM_7_ZIP_PATH}"
+    elif [ -n "${CONTACT_FORM_7_ZIP_URL:-}" ]; then
+        zip_source="/tmp/contact-form-7.zip"
+        cleanup_zip=1
+        curl -fsSL "${CONTACT_FORM_7_ZIP_URL}" -o "${zip_source}"
+    else
+        return
+    fi
+
+    echo "Ensuring Contact Form 7 plugin is installed..."
+
+    if [ -n "${CONTACT_FORM_7_ZIP_SHA256:-}" ]; then
+        echo "${CONTACT_FORM_7_ZIP_SHA256}  ${zip_source}" | sha256sum -c -
+    fi
+
+    plugin_root="/var/www/html/wp-content/plugins"
+    mkdir -p "${plugin_root}"
+
+    mapfile -t top_dirs < <(unzip -Z1 "${zip_source}" | awk -F/ 'NF>1{print $1}' | sort -u)
+
+    need_extract=1
+    if [ "${#top_dirs[@]}" -gt 0 ]; then
+        need_extract=0
+        for dir in "${top_dirs[@]}"; do
+            if [ ! -d "${plugin_root}/${dir}" ]; then
+                need_extract=1
+                break
+            fi
+        done
+    fi
+
+    if [ "${need_extract}" -eq 1 ]; then
+        unzip -qo "${zip_source}" -d "${plugin_root}"
+    fi
+
+    if [ "${cleanup_zip}" -eq 1 ]; then
+        rm -f "${zip_source}"
+    fi
+
+    chown -R www-data:www-data "${plugin_root}"
+}
+
 mysql_args() {
     local host="${WORDPRESS_DB_HOST}"
     local port=""
@@ -181,6 +228,7 @@ chown -R www-data:www-data /var/www/html/wp-content/uploads
 
 generate_wp_config
 install_oxygen_plugin
+install_contact_form_7_plugin
 import_db_if_empty
 
 exec "$@"

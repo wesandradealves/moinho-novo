@@ -39,6 +39,9 @@ services:
       OXYGEN_ZIP_PATH: /opt/oxygen/oxygen.zip
       OXYGEN_ZIP_URL: ${OXYGEN_ZIP_URL:-}
       OXYGEN_ZIP_SHA256: ${OXYGEN_ZIP_SHA256:-}
+      CONTACT_FORM_7_ZIP_PATH: /opt/plugins/contact-form-7.zip
+      CONTACT_FORM_7_ZIP_URL: ${CONTACT_FORM_7_ZIP_URL:-}
+      CONTACT_FORM_7_ZIP_SHA256: ${CONTACT_FORM_7_ZIP_SHA256:-}
     volumes:
       - wp-data:/var/www/html
       - ./uploads:/var/www/html/wp-content/uploads
@@ -46,6 +49,7 @@ services:
       - ./mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./db.sql:/opt/seed/db.sql:ro
       - ./oxygen-4.9.5.zip:/opt/oxygen/oxygen.zip:ro
+      - ./contact-form-7.6.1.4.zip:/opt/plugins/contact-form-7.zip:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]

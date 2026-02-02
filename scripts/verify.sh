@@ -94,6 +94,13 @@ else
     echo "Oxygen zip not found, skipping Oxygen plugin checks."
 fi
 
+if [ -f "${PROJECT_DIR}/contact-form-7.6.1.4.zip" ]; then
+    "${DC[@]}" exec -T wordpress test -f /opt/plugins/contact-form-7.zip
+    "${DC[@]}" exec -T wordpress test -d /var/www/html/wp-content/plugins/contact-form-7
+else
+    echo "Contact Form 7 zip not found, skipping Contact Form 7 checks."
+fi
+
 echo "Checking DB tables..."
 db_count="$("${DC[@]}" exec -T wordpress bash -lc 'mysql --skip-ssl -h "$WORDPRESS_DB_HOST" -u "$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -N -s -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=\"$WORDPRESS_DB_NAME\";"')"
 db_count="$(echo "${db_count:-0}" | tr -d '\r')"
@@ -111,6 +118,17 @@ if [ -f "${PROJECT_DIR}/oxygen-4.9.5.zip" ]; then
     fi
 else
     echo "Skipping Oxygen activation check (zip missing)."
+fi
+
+echo "Checking Contact Form 7 activation..."
+if [ -f "${PROJECT_DIR}/contact-form-7.6.1.4.zip" ]; then
+    cf7_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('contact-form-7/wp-contact-form-7.php') ? 'active' : 'inactive';")"
+    if [ "${cf7_active}" != "active" ]; then
+        echo "Contact Form 7 plugin is not active."
+        exit 1
+    fi
+else
+    echo "Skipping Contact Form 7 activation check (zip missing)."
 fi
 
 license_set="$("${DC[@]}" exec -T wordpress bash -lc 'test -n "$OXYGEN_LICENSE_KEY" && echo yes || echo no')"

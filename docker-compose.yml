@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${WORDPRESS_DB_NAME:-wordpress}
+      MARIADB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      MARIADB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-root}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$${MARIADB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wordpress:
+    build:
+      context: .
+      args:
+        WORDPRESS_DOWNLOAD_URL: ${WORDPRESS_DOWNLOAD_URL:-https://wordpress.org/latest.tar.gz}
+        OXYGEN_ZIP_URL: ${OXYGEN_ZIP_URL:-}
+        OXYGEN_ZIP_SHA256: ${OXYGEN_ZIP_SHA256:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${WORDPRESS_PORT:-8080}:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wp_}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
+      WORDPRESS_DB_DUMP: ${WORDPRESS_DB_DUMP:-/opt/seed/db.sql}
+      OXYGEN_LICENSE_KEY: ${OXYGEN_LICENSE_KEY:-}
+      OXYGEN_ZIP_PATH: /opt/oxygen/oxygen.zip
+      OXYGEN_ZIP_URL: ${OXYGEN_ZIP_URL:-}
+      OXYGEN_ZIP_SHA256: ${OXYGEN_ZIP_SHA256:-}
+    volumes:
+      - wp-data:/var/www/html
+      - ./uploads:/var/www/html/wp-content/uploads
+      - ./themes/moinho-novo:/var/www/html/wp-content/themes/moinho-novo
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./db.sql:/opt/seed/db.sql:ro
+      - ./oxygen-4.9.5.zip:/opt/oxygen/oxygen.zip:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  db-data:
+  wp-data:

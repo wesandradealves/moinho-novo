@@ -11,6 +11,8 @@ RUN set -eux; \
         unzip \
         default-mysql-client \
         libzip-dev \
+        zlib1g-dev \
+        libssl-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
         libwebp-dev \
@@ -25,7 +27,10 @@ RUN set -eux; \
         intl \
         exif \
         opcache; \
+    pecl install redis; \
+    docker-php-ext-enable redis; \
     a2enmod rewrite headers expires; \
+    rm -rf /tmp/pear; \
     rm -rf /var/lib/apt/lists/*
 
 COPY php.ini /usr/local/etc/php/conf.d/zzz-custom.ini

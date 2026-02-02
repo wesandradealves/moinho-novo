@@ -14,6 +14,7 @@ function moinho_novo_activate_required_plugins(): void
 
     $required = [
         'contact-form-7/wp-contact-form-7.php',
+        'redis-cache/redis-cache.php',
     ];
 
     if (!function_exists('is_plugin_active')) {
@@ -32,3 +33,23 @@ function moinho_novo_activate_required_plugins(): void
     }
 }
 add_action('init', 'moinho_novo_activate_required_plugins', 5);
+
+function moinho_novo_enable_redis_object_cache(): void
+{
+    if (!defined('WP_CONTENT_DIR') || !defined('WP_PLUGIN_DIR')) {
+        return;
+    }
+
+    $plugin_file = WP_PLUGIN_DIR . '/redis-cache/redis-cache.php';
+    if (!file_exists($plugin_file)) {
+        return;
+    }
+
+    $dropin = WP_CONTENT_DIR . '/object-cache.php';
+    $source = WP_PLUGIN_DIR . '/redis-cache/includes/object-cache.php';
+
+    if (!file_exists($dropin) && file_exists($source)) {
+        @copy($source, $dropin);
+    }
+}
+add_action('init', 'moinho_novo_enable_redis_object_cache', 15);

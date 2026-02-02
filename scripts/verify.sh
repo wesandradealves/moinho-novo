@@ -76,6 +76,7 @@ wait_for_health() {
 }
 
 wait_for_health db 180
+wait_for_health redis 180
 wait_for_health wordpress 180
 
 echo "Checking HTTP endpoints..."
@@ -99,6 +100,20 @@ if [ -f "${PROJECT_DIR}/contact-form-7.6.1.4.zip" ]; then
     "${DC[@]}" exec -T wordpress test -d /var/www/html/wp-content/plugins/contact-form-7
 else
     echo "Contact Form 7 zip not found, skipping Contact Form 7 checks."
+fi
+
+echo "Checking Redis extension..."
+redis_ext="$("${DC[@]}" exec -T wordpress php -r "echo extension_loaded('redis') ? 'yes' : 'no';")"
+if [ "${redis_ext}" != "yes" ]; then
+    echo "Redis PHP extension is not loaded."
+    exit 1
+fi
+
+echo "Checking Redis connectivity..."
+redis_ping="$("${DC[@]}" exec -T wordpress php -r "\$host = getenv('WORDPRESS_REDIS_HOST') ?: 'redis'; \$port = (int)(getenv('WORDPRESS_REDIS_PORT') ?: 6379); \$redis = new Redis(); \$redis->connect(\$host, \$port, 2.5); echo \$redis->ping();")"
+if [[ "${redis_ping}" != *"PONG"* && "${redis_ping}" != "1" ]]; then
+    echo "Redis ping failed: ${redis_ping}"
+    exit 1
 fi
 
 echo "Checking DB tables..."
@@ -129,6 +144,23 @@ if [ -f "${PROJECT_DIR}/contact-form-7.6.1.4.zip" ]; then
     fi
 else
     echo "Skipping Contact Form 7 activation check (zip missing)."
+fi
+
+echo "Checking Redis Cache activation..."
+redis_cache_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('redis-cache/redis-cache.php') ? 'active' : 'inactive';")"
+if [ "${redis_cache_active}" != "active" ]; then
+    echo "Redis Cache plugin is not active."
+    exit 1
+fi
+
+echo "Checking Redis object-cache drop-in..."
+"${DC[@]}" exec -T wordpress test -f /var/www/html/wp-content/object-cache.php
+
+echo "Checking Opcache extension..."
+opcache_ext="$("${DC[@]}" exec -T wordpress php -r "echo function_exists('opcache_get_status') ? 'yes' : 'no';")"
+if [ "${opcache_ext}" != "yes" ]; then
+    echo "Opcache extension is not loaded."
+    exit 1
 fi
 
 license_set="$("${DC[@]}" exec -T wordpress bash -lc 'test -n "$OXYGEN_LICENSE_KEY" && echo yes || echo no')"

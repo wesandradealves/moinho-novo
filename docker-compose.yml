@@ -15,6 +15,18 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   wordpress:
     build:
       context: .
@@ -24,6 +36,8 @@ services:
         OXYGEN_ZIP_SHA256: ${OXYGEN_ZIP_SHA256:-}
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - "${WORDPRESS_PORT:-8080}:80"
@@ -35,6 +49,15 @@ services:
       WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wp_}
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
       WORDPRESS_DB_DUMP: ${WORDPRESS_DB_DUMP:-/opt/seed/db.sql}
+      WORDPRESS_REDIS_HOST: ${WORDPRESS_REDIS_HOST:-redis}
+      WORDPRESS_REDIS_PORT: ${WORDPRESS_REDIS_PORT:-6379}
+      WORDPRESS_REDIS_DATABASE: ${WORDPRESS_REDIS_DATABASE:-0}
+      WORDPRESS_REDIS_PREFIX: ${WORDPRESS_REDIS_PREFIX:-moinho_novo}
+      REDIS_CACHE_AUTO_DOWNLOAD: ${REDIS_CACHE_AUTO_DOWNLOAD:-1}
+      REDIS_CACHE_DOWNLOAD_URL: ${REDIS_CACHE_DOWNLOAD_URL:-https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip}
+      REDIS_CACHE_ZIP_PATH: ${REDIS_CACHE_ZIP_PATH:-}
+      REDIS_CACHE_ZIP_URL: ${REDIS_CACHE_ZIP_URL:-}
+      REDIS_CACHE_ZIP_SHA256: ${REDIS_CACHE_ZIP_SHA256:-}
       OXYGEN_LICENSE_KEY: ${OXYGEN_LICENSE_KEY:-}
       OXYGEN_ZIP_PATH: /opt/oxygen/oxygen.zip
       OXYGEN_ZIP_URL: ${OXYGEN_ZIP_URL:-}
@@ -61,3 +84,4 @@ services:
 volumes:
   db-data:
   wp-data:
+  redis-data:

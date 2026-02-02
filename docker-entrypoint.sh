@@ -8,6 +8,12 @@ set -euo pipefail
 : "${WORDPRESS_TABLE_PREFIX:=wp_}"
 : "${WORDPRESS_DEBUG:=0}"
 : "${WORDPRESS_DB_DUMP:=/opt/seed/db.sql}"
+: "${WORDPRESS_REDIS_HOST:=redis}"
+: "${WORDPRESS_REDIS_PORT:=6379}"
+: "${WORDPRESS_REDIS_DATABASE:=0}"
+: "${WORDPRESS_REDIS_PREFIX:=moinho_novo}"
+: "${REDIS_CACHE_AUTO_DOWNLOAD:=1}"
+: "${REDIS_CACHE_DOWNLOAD_URL:=https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip}"
 
 copy_wordpress() {
     if [ ! -f /var/www/html/wp-includes/version.php ]; then
@@ -51,6 +57,10 @@ PHP
     db_pass="$(php -r 'echo var_export(getenv("WORDPRESS_DB_PASSWORD"), true);')"
     db_host="$(php -r 'echo var_export(getenv("WORDPRESS_DB_HOST"), true);')"
     table_prefix="$(php -r 'echo var_export(getenv("WORDPRESS_TABLE_PREFIX"), true);')"
+    redis_host="$(php -r 'echo var_export(getenv("WORDPRESS_REDIS_HOST"), true);')"
+    redis_port="$(php -r 'echo var_export(getenv("WORDPRESS_REDIS_PORT"), true);')"
+    redis_db="$(php -r 'echo var_export(getenv("WORDPRESS_REDIS_DATABASE"), true);')"
+    redis_prefix="$(php -r 'echo var_export(getenv("WORDPRESS_REDIS_PREFIX"), true);')"
 
     cat > /var/www/html/wp-config.php <<PHP
 <?php
@@ -68,6 +78,24 @@ ${salts}
 define('WP_DEBUG', ${wp_debug});
 define('FS_METHOD', 'direct');
 
+\$redis_host = ${redis_host};
+\$redis_port = ${redis_port};
+\$redis_db = ${redis_db};
+\$redis_prefix = ${redis_prefix};
+
+if (\$redis_host) {
+    define('WP_REDIS_HOST', \$redis_host);
+    if (\$redis_port) {
+        define('WP_REDIS_PORT', (int) \$redis_port);
+    }
+    if (\$redis_db !== null) {
+        define('WP_REDIS_DATABASE', (int) \$redis_db);
+    }
+    if (\$redis_prefix) {
+        define('WP_REDIS_PREFIX', \$redis_prefix);
+    }
+}
+
 if ( ! defined('ABSPATH') ) {
     define('ABSPATH', __DIR__ . '/');
 }
@@ -76,6 +104,50 @@ require_once ABSPATH . 'wp-settings.php';
 PHP
 
     chown www-data:www-data /var/www/html/wp-config.php
+}
+
+ensure_redis_config() {
+    if [ ! -f /var/www/html/wp-config.php ]; then
+        return
+    fi
+
+    php <<'PHP'
+<?php
+$file = '/var/www/html/wp-config.php';
+$text = file_get_contents($file);
+if ($text === false) {
+    exit(0);
+}
+if (strpos($text, 'WP_REDIS_HOST') !== false) {
+    exit(0);
+}
+
+$block = <<<'BLOCK'
+if (getenv('WORDPRESS_REDIS_HOST')) {
+    define('WP_REDIS_HOST', getenv('WORDPRESS_REDIS_HOST'));
+    $redis_port = getenv('WORDPRESS_REDIS_PORT');
+    if ($redis_port !== false && $redis_port !== '') {
+        define('WP_REDIS_PORT', (int) $redis_port);
+    }
+    $redis_db = getenv('WORDPRESS_REDIS_DATABASE');
+    if ($redis_db !== false && $redis_db !== '') {
+        define('WP_REDIS_DATABASE', (int) $redis_db);
+    }
+    $redis_prefix = getenv('WORDPRESS_REDIS_PREFIX');
+    if ($redis_prefix !== false && $redis_prefix !== '') {
+        define('WP_REDIS_PREFIX', $redis_prefix);
+    }
+}
+BLOCK;
+
+$marker = "require_once ABSPATH . 'wp-settings.php';";
+if (strpos($text, $marker) !== false) {
+    $text = str_replace($marker, $block . "\n\n" . $marker, $text);
+} else {
+    $text .= "\n" . $block . "\n";
+}
+file_put_contents($file, $text);
+PHP
 }
 
 install_oxygen_plugin() {
@@ -173,6 +245,61 @@ install_contact_form_7_plugin() {
     chown -R www-data:www-data "${plugin_root}"
 }
 
+install_redis_cache_plugin() {
+    local zip_source=""
+    local cleanup_zip=0
+    local plugin_root="/var/www/html/wp-content/plugins"
+
+    if [ -d "${plugin_root}/redis-cache" ]; then
+        return
+    fi
+
+    if [ -n "${REDIS_CACHE_ZIP_PATH:-}" ] && [ -f "${REDIS_CACHE_ZIP_PATH}" ]; then
+        zip_source="${REDIS_CACHE_ZIP_PATH}"
+    elif [ -n "${REDIS_CACHE_ZIP_URL:-}" ]; then
+        zip_source="/tmp/redis-cache.zip"
+        cleanup_zip=1
+        curl -fsSL "${REDIS_CACHE_ZIP_URL}" -o "${zip_source}"
+    elif [ "${REDIS_CACHE_AUTO_DOWNLOAD}" = "1" ] || [ "${REDIS_CACHE_AUTO_DOWNLOAD}" = "true" ]; then
+        zip_source="/tmp/redis-cache.zip"
+        cleanup_zip=1
+        curl -fsSL "${REDIS_CACHE_DOWNLOAD_URL}" -o "${zip_source}"
+    else
+        return
+    fi
+
+    echo "Ensuring Redis Cache plugin is installed..."
+
+    if [ -n "${REDIS_CACHE_ZIP_SHA256:-}" ]; then
+        echo "${REDIS_CACHE_ZIP_SHA256}  ${zip_source}" | sha256sum -c -
+    fi
+
+    mkdir -p "${plugin_root}"
+
+    mapfile -t top_dirs < <(unzip -Z1 "${zip_source}" | awk -F/ 'NF>1{print $1}' | sort -u)
+
+    need_extract=1
+    if [ "${#top_dirs[@]}" -gt 0 ]; then
+        need_extract=0
+        for dir in "${top_dirs[@]}"; do
+            if [ ! -d "${plugin_root}/${dir}" ]; then
+                need_extract=1
+                break
+            fi
+        done
+    fi
+
+    if [ "${need_extract}" -eq 1 ]; then
+        unzip -qo "${zip_source}" -d "${plugin_root}"
+    fi
+
+    if [ "${cleanup_zip}" -eq 1 ]; then
+        rm -f "${zip_source}"
+    fi
+
+    chown -R www-data:www-data "${plugin_root}"
+}
+
 mysql_args() {
     local host="${WORDPRESS_DB_HOST}"
     local port=""
@@ -227,8 +354,10 @@ mkdir -p /var/www/html/wp-content/uploads
 chown -R www-data:www-data /var/www/html/wp-content/uploads
 
 generate_wp_config
+ensure_redis_config
 install_oxygen_plugin
 install_contact_form_7_plugin
+install_redis_cache_plugin
 import_db_if_empty
 
 exec "$@"

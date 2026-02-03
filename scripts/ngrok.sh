@@ -72,54 +72,66 @@ fi
 echo "NGROK URL: ${url}"
 
 "${DC[@]}" exec -T -e NGROK_PUBLIC_URL="${url}" wordpress php -r ' 
+require "/var/www/html/wp-load.php";
+
 $url = getenv("NGROK_PUBLIC_URL");
 if (! $url) { exit(1); }
 
-$db_host = getenv("WORDPRESS_DB_HOST") ?: "db";
-$db_name = getenv("WORDPRESS_DB_NAME") ?: "wordpress";
-$db_user = getenv("WORDPRESS_DB_USER") ?: "wordpress";
-$db_pass = getenv("WORDPRESS_DB_PASSWORD") ?: "wordpress";
-$prefix = getenv("WORDPRESS_TABLE_PREFIX") ?: "wp_";
+update_option("home", $url);
+update_option("siteurl", $url);
 
-$mysqli = @new mysqli($db_host, $db_user, $db_pass, $db_name);
-if ($mysqli->connect_errno) {
-    fwrite(STDERR, "Erro ao conectar no banco: " . $mysqli->connect_error . PHP_EOL);
-    exit(1);
+$host = parse_url($url, PHP_URL_HOST);
+$port = parse_url($url, PHP_URL_PORT);
+$origin = $host ? ($host . ($port ? ":" . $port : "")) : "";
+$protocol_relative = $origin ? ("//" . $origin) : "";
+
+$replace_origin = function ($value) use ($protocol_relative) {
+    if (!is_string($value) || $value === "" || $protocol_relative === "") {
+        return $value;
+    }
+    return preg_replace("#^(https?:)?//[^/]+#", $protocol_relative, $value);
+};
+
+$universal = get_option("oxygen_vsb_universal_css_url");
+$universal_new = $replace_origin($universal);
+if ($universal_new !== $universal) {
+    update_option("oxygen_vsb_universal_css_url", $universal_new, false);
 }
-$safe = $mysqli->real_escape_string($url);
-$mysqli->query("UPDATE {$prefix}options SET option_value=\"{$safe}\" WHERE option_name IN (\"home\",\"siteurl\")");
 
-// Atualiza config do WP-Optimize (evita erro de cache ao mudar o dominio).
-$config_dir = "/var/www/html/wp-content/wpo-cache/config";
-if (is_dir($config_dir)) {
-    $host = parse_url($url, PHP_URL_HOST);
-    $port = parse_url($url, PHP_URL_PORT);
-    if ($host) {
-        $suffix = $host . ($port ? "-port" . $port : "");
-        $target = $config_dir . "/config-" . $suffix . ".php";
-        $existing = glob($config_dir . "/config-*.php");
-        $config = null;
-        if (!empty($existing)) {
-            if (!defined("ABSPATH")) {
-                define("ABSPATH", "/var/www/html/");
-            }
-            require $existing[0];
-            if (isset($GLOBALS["wpo_cache_config"]) && is_array($GLOBALS["wpo_cache_config"])) {
-                $config = $GLOBALS["wpo_cache_config"];
-            }
+$state = get_option("oxygen_vsb_css_files_state");
+if (is_array($state)) {
+    foreach ($state as $key => $entry) {
+        if (is_array($entry) && isset($entry["url"])) {
+            $state[$key]["url"] = $replace_origin($entry["url"]);
         }
-        if (is_array($config)) {
-            $config["site_url"] = rtrim($url, "/") . "/";
-            $json = json_encode($config);
+    }
+    update_option("oxygen_vsb_css_files_state", $state, false);
+}
+
+$wpo = get_option("wpo_cache_config");
+if (is_array($wpo)) {
+    $wpo["site_url"] = rtrim($url, "/") . "/";
+    update_option("wpo_cache_config", $wpo, false);
+
+    if ($origin !== "") {
+        $config_dir = WP_CONTENT_DIR . "/wpo-cache/config";
+        if (is_dir($config_dir)) {
+            $target = $config_dir . "/config-" . $origin . ".php";
+            $json = json_encode($wpo);
             $content = "<?php\nif (!defined(\"ABSPATH\")) die(\"No direct access allowed\");\n\n" .
                 "\$GLOBALS[\"wpo_cache_config\"] = json_decode(" . var_export($json, true) . ", true);\n";
             file_put_contents($target, $content);
         }
     }
 }
-'
 
-"${DC[@]}" exec -T wordpress php -r ' 
-require "/var/www/html/wp-load.php";
-if (function_exists("flush_rewrite_rules")) { flush_rewrite_rules(true); }
+if (function_exists("flush_rewrite_rules")) {
+    flush_rewrite_rules(true);
+}
+
+$htaccess = ABSPATH . ".htaccess";
+if (!file_exists($htaccess)) {
+    $rules = "# BEGIN WordPress\n<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]\nRewriteBase /\nRewriteRule ^index\\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . /index.php [L]\n</IfModule>\n# END WordPress\n";
+    file_put_contents($htaccess, $rules);
+}
 '

@@ -468,6 +468,30 @@ if ($exists !== $table) {
 PHP
 }
 
+ensure_htaccess() {
+    local htaccess="/var/www/html/.htaccess"
+
+    if [ -f "${htaccess}" ]; then
+        return
+    fi
+
+    cat > "${htaccess}" <<'EOF'
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+EOF
+
+    chown www-data:www-data "${htaccess}"
+}
+
 mysql_args() {
     local host="${WORDPRESS_DB_HOST}"
     local port=""
@@ -531,5 +555,6 @@ install_wp_optimize_plugin
 install_defender_plugin
 import_db_if_empty
 ensure_defender_tables
+ensure_htaccess
 
 exec "$@"

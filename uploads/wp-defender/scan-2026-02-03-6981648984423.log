@@ -1,0 +1,35 @@
+[2026-02-03T02:59:21+00:00] Prepare facts for a scan
+[2026-02-03T02:59:21+00:00] Current task gather_info
+[2026-02-03T02:59:21+00:00] processing gather_info
+[2026-02-03T02:59:21+00:00] Core: 2914
+[2026-02-03T02:59:21+00:00] get_core_files in 0
+[2026-02-03T02:59:21+00:00] process done, queue for next
+[2026-02-03T02:59:21+00:00] Scan not done, pinging
+[2026-02-03T02:59:21+00:00] Current task gather_info
+[2026-02-03T02:59:21+00:00] processing gather_info
+[2026-02-03T02:59:21+00:00] Number of files: 5140
+[2026-02-03T02:59:22+00:00] get_content_files in 1
+[2026-02-03T02:59:22+00:00] task gather_info processed
+[2026-02-03T02:59:22+00:00] queue core_integrity_check for next
+[2026-02-03T02:59:22+00:00] process done, queue for next
+[2026-02-03T02:59:22+00:00] Scan not done, pinging
+[2026-02-03T02:59:22+00:00] Current task core_integrity_check
+[2026-02-03T02:59:22+00:00] processing core_integrity_check
+[2026-02-03T02:59:22+00:00] Fetch checksums, should only once
+[2026-02-03T02:59:23+00:00] current pos 0
+[2026-02-03T02:59:24+00:00] skip /var/www/html/.htaccess because of file is whitelisted
+[2026-02-03T02:59:24+00:00] task core_integrity_check processed
+[2026-02-03T02:59:24+00:00] queue plugin_integrity_check for next
+[2026-02-03T02:59:24+00:00] process done, queue for next
+[2026-02-03T02:59:24+00:00] Scan not done, pinging
+[2026-02-03T02:59:24+00:00] Current task plugin_integrity_check
+[2026-02-03T02:59:24+00:00] processing plugin_integrity_check
+[2026-02-03T02:59:31+00:00] task plugin_integrity_check processed
+[2026-02-03T02:59:31+00:00] queue abandoned_plugin_check for next
+[2026-02-03T02:59:31+00:00] process done, queue for next
+[2026-02-03T02:59:31+00:00] Scan not done, pinging
+[2026-02-03T02:59:31+00:00] Current task abandoned_plugin_check
+[2026-02-03T02:59:31+00:00] processing abandoned_plugin_check
+[2026-02-03T02:59:34+00:00] task abandoned_plugin_check processed
+[2026-02-03T02:59:34+00:00] All done!
+[2026-02-03T02:59:35+00:00] process done, queue for next

@@ -23,6 +23,12 @@ function moinho_novo_activate_required_plugins(): void
     }
     $required[] = $wp_optimize;
 
+    $defender = getenv('DEFENDER_PLUGIN_FILE');
+    if (!is_string($defender) || trim($defender) === '') {
+        $defender = 'defender-security/wp-defender.php';
+    }
+    $required[] = $defender;
+
     if (!function_exists('is_plugin_active')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }

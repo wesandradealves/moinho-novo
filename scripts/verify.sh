@@ -116,6 +116,13 @@ else
     echo "WP-Optimize zip not found, skipping its checks."
 fi
 
+if [ -f "${PROJECT_DIR}/defender-security.5.9.0.zip" ]; then
+    "${DC[@]}" exec -T wordpress test -f /opt/plugins/defender-security.zip
+    "${DC[@]}" exec -T wordpress test -d /var/www/html/wp-content/plugins/defender-security
+else
+    echo "Defender Security zip not found, skipping its checks."
+fi
+
 echo "Checking Redis extension..."
 redis_ext="$("${DC[@]}" exec -T wordpress php -r "echo extension_loaded('redis') ? 'yes' : 'no';")"
 if [ "${redis_ext}" != "yes" ]; then
@@ -178,6 +185,36 @@ if [ -f "${PROJECT_DIR}/wp-optimize.4.4.1.zip" ]; then
     fi
 else
     echo "Skipping WP-Optimize activation check (zip missing)."
+fi
+
+echo "Checking Defender Security activation..."
+if [ -f "${PROJECT_DIR}/defender-security.5.9.0.zip" ]; then
+    defender_file="${DEFENDER_PLUGIN_FILE:-defender-security/wp-defender.php}"
+    defender_exists="$("${DC[@]}" exec -T wordpress bash -lc "test -f /var/www/html/wp-content/plugins/${defender_file} && echo yes || echo no")"
+    if [ "${defender_exists}" = "yes" ]; then
+        defender_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('${defender_file}') ? 'active' : 'inactive';")"
+        if [ "${defender_active}" != "active" ]; then
+            echo "Defender Security plugin is not active."
+            exit 1
+        fi
+    else
+        echo "Defender Security plugin file not found (${defender_file})."
+        exit 1
+    fi
+else
+    echo "Skipping Defender Security activation check (zip missing)."
+fi
+
+echo "Checking Defender Security tables..."
+if [ -f "${PROJECT_DIR}/defender-security.5.9.0.zip" ]; then
+    defender_table="$("${DC[@]}" exec -T wordpress bash -lc 'mysql --skip-ssl -h "$WORDPRESS_DB_HOST" -u "$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -N -s -e "SHOW TABLES LIKE \"${WORDPRESS_TABLE_PREFIX}defender_lockout\";" "$WORDPRESS_DB_NAME"')"
+    defender_table="$(echo "${defender_table:-}" | tr -d '\r')"
+    if [ -z "${defender_table}" ]; then
+        echo "Defender Security table wp_defender_lockout not found."
+        exit 1
+    fi
+else
+    echo "Skipping Defender Security table check (zip missing)."
 fi
 
 echo "Checking Redis Cache activation..."

@@ -11,7 +11,8 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 4) Coloque o ZIP do Contact Form 7 em `./contact-form-7.6.1.4.zip` (ja montado no container).
 5) Coloque o ZIP do All-in-One WP Migration Unlimited em `./all-in-one-wp-migration-unlimited-main.zip`.
 6) Coloque o ZIP do WP-Optimize em `./wp-optimize.4.4.1.zip`.
-7) O dump do banco deve ficar em `./db.sql` para importacao automatica quando o banco estiver vazio.
+7) Coloque o ZIP do Defender Security em `./defender-security.5.9.0.zip`.
+8) O dump do banco deve ficar em `./db.sql` para importacao automatica quando o banco estiver vazio.
    - Opcional: use `OXYGEN_ZIP_URL` se preferir baixar via URL direta.
 3) Suba os containers:
    - `docker compose up -d --build`
@@ -25,6 +26,7 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 - O Contact Form 7 e instalado automaticamente se existir `CONTACT_FORM_7_ZIP_PATH` (arquivo local) ou `CONTACT_FORM_7_ZIP_URL` (URL direta).
 - O All-in-One WP Migration Unlimited e instalado automaticamente se existir `AIOWPM_ZIP_PATH` (arquivo local) ou `AIOWPM_ZIP_URL` (URL direta), mas a ativacao e manual.
 - O WP-Optimize e instalado automaticamente se existir `WP_OPTIMIZE_ZIP_PATH` (arquivo local) ou `WP_OPTIMIZE_ZIP_URL` (URL direta).
+- O Defender Security e instalado automaticamente se existir `DEFENDER_ZIP_PATH` (arquivo local) ou `DEFENDER_ZIP_URL` (URL direta).
 - Redis (container dedicado) e Opcache estao habilitados por padrao para melhorar performance.
 - O plugin Redis Cache e baixado automaticamente no primeiro boot (ou voce pode fornecer `REDIS_CACHE_ZIP_URL`).
 - Se o banco estiver vazio, o entrypoint importa automaticamente `db.sql` e faz flush de permalinks.

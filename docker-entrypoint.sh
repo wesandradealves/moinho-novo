@@ -16,6 +16,7 @@ set -euo pipefail
 : "${REDIS_CACHE_DOWNLOAD_URL:=https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip}"
 : "${AIOWPM_PLUGIN_FILE:=all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration.php}"
 : "${WP_OPTIMIZE_PLUGIN_FILE:=wp-optimize/wp-optimize.php}"
+: "${DEFENDER_PLUGIN_FILE:=defender-security/wp-defender.php}"
 
 copy_wordpress() {
     if [ ! -f /var/www/html/wp-includes/version.php ]; then
@@ -396,6 +397,77 @@ install_wp_optimize_plugin() {
     chown -R www-data:www-data "${plugin_root}"
 }
 
+install_defender_plugin() {
+    local zip_source=""
+    local cleanup_zip=0
+
+    if [ -n "${DEFENDER_ZIP_PATH:-}" ] && [ -f "${DEFENDER_ZIP_PATH}" ]; then
+        zip_source="${DEFENDER_ZIP_PATH}"
+    elif [ -n "${DEFENDER_ZIP_URL:-}" ]; then
+        zip_source="/tmp/defender-security.zip"
+        cleanup_zip=1
+        curl -fsSL "${DEFENDER_ZIP_URL}" -o "${zip_source}"
+    else
+        return
+    fi
+
+    echo "Ensuring Defender Security plugin is installed..."
+
+    if [ -n "${DEFENDER_ZIP_SHA256:-}" ]; then
+        echo "${DEFENDER_ZIP_SHA256}  ${zip_source}" | sha256sum -c -
+    fi
+
+    plugin_root="/var/www/html/wp-content/plugins"
+    mkdir -p "${plugin_root}"
+
+    mapfile -t top_dirs < <(unzip -Z1 "${zip_source}" | awk -F/ 'NF>1{print $1}' | sort -u)
+
+    need_extract=1
+    if [ "${#top_dirs[@]}" -gt 0 ]; then
+        need_extract=0
+        for dir in "${top_dirs[@]}"; do
+            if [ ! -d "${plugin_root}/${dir}" ]; then
+                need_extract=1
+                break
+            fi
+        done
+    fi
+
+    if [ "${need_extract}" -eq 1 ]; then
+        unzip -qo "${zip_source}" -d "${plugin_root}"
+    fi
+
+    if [ "${cleanup_zip}" -eq 1 ]; then
+        rm -f "${zip_source}"
+    fi
+
+    chown -R www-data:www-data "${plugin_root}"
+}
+
+ensure_defender_tables() {
+    local plugin_file="${DEFENDER_PLUGIN_FILE:-defender-security/wp-defender.php}"
+
+    if [ ! -f "/var/www/html/wp-content/plugins/${plugin_file}" ]; then
+        return
+    fi
+
+    echo "Ensuring Defender Security tables exist..."
+    php <<'PHP'
+<?php
+require '/var/www/html/wp-load.php';
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+$plugin = getenv('DEFENDER_PLUGIN_FILE') ?: 'defender-security/wp-defender.php';
+global $wpdb;
+$table = $wpdb->base_prefix . 'defender_lockout';
+$exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table));
+if ($exists !== $table) {
+    deactivate_plugins($plugin, true);
+    activate_plugin($plugin, '', is_multisite());
+}
+PHP
+}
+
 mysql_args() {
     local host="${WORDPRESS_DB_HOST}"
     local port=""
@@ -456,6 +528,8 @@ install_contact_form_7_plugin
 install_redis_cache_plugin
 install_aiowpm_plugin
 install_wp_optimize_plugin
+install_defender_plugin
 import_db_if_empty
+ensure_defender_tables
 
 exec "$@"

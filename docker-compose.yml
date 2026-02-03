@@ -66,6 +66,10 @@ services:
       WP_OPTIMIZE_ZIP_URL: ${WP_OPTIMIZE_ZIP_URL:-}
       WP_OPTIMIZE_ZIP_SHA256: ${WP_OPTIMIZE_ZIP_SHA256:-}
       WP_OPTIMIZE_PLUGIN_FILE: ${WP_OPTIMIZE_PLUGIN_FILE:-wp-optimize/wp-optimize.php}
+      DEFENDER_ZIP_PATH: /opt/plugins/defender-security.zip
+      DEFENDER_ZIP_URL: ${DEFENDER_ZIP_URL:-}
+      DEFENDER_ZIP_SHA256: ${DEFENDER_ZIP_SHA256:-}
+      DEFENDER_PLUGIN_FILE: ${DEFENDER_PLUGIN_FILE:-defender-security/wp-defender.php}
       OXYGEN_LICENSE_KEY: ${OXYGEN_LICENSE_KEY:-}
       OXYGEN_ZIP_PATH: /opt/oxygen/oxygen.zip
       OXYGEN_ZIP_URL: ${OXYGEN_ZIP_URL:-}
@@ -83,6 +87,7 @@ services:
       - ./contact-form-7.6.1.4.zip:/opt/plugins/contact-form-7.zip:ro
       - ./all-in-one-wp-migration-unlimited-main.zip:/opt/plugins/all-in-one-wp-migration-unlimited-main.zip:ro
       - ./wp-optimize.4.4.1.zip:/opt/plugins/wp-optimize.zip:ro
+      - ./defender-security.5.9.0.zip:/opt/plugins/defender-security.zip:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]

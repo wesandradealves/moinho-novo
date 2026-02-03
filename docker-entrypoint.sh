@@ -14,6 +14,7 @@ set -euo pipefail
 : "${WORDPRESS_REDIS_PREFIX:=moinho_novo}"
 : "${REDIS_CACHE_AUTO_DOWNLOAD:=1}"
 : "${REDIS_CACHE_DOWNLOAD_URL:=https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip}"
+: "${AIOWPM_PLUGIN_FILE:=all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration-unlimited-main.php}"
 
 copy_wordpress() {
     if [ ! -f /var/www/html/wp-includes/version.php ]; then
@@ -300,6 +301,53 @@ install_redis_cache_plugin() {
     chown -R www-data:www-data "${plugin_root}"
 }
 
+install_aiowpm_plugin() {
+    local zip_source=""
+    local cleanup_zip=0
+
+    if [ -n "${AIOWPM_ZIP_PATH:-}" ] && [ -f "${AIOWPM_ZIP_PATH}" ]; then
+        zip_source="${AIOWPM_ZIP_PATH}"
+    elif [ -n "${AIOWPM_ZIP_URL:-}" ]; then
+        zip_source="/tmp/all-in-one-wp-migration-unlimited-main.zip"
+        cleanup_zip=1
+        curl -fsSL "${AIOWPM_ZIP_URL}" -o "${zip_source}"
+    else
+        return
+    fi
+
+    echo "Ensuring All-in-One WP Migration (Unlimited) plugin is installed..."
+
+    if [ -n "${AIOWPM_ZIP_SHA256:-}" ]; then
+        echo "${AIOWPM_ZIP_SHA256}  ${zip_source}" | sha256sum -c -
+    fi
+
+    plugin_root="/var/www/html/wp-content/plugins"
+    mkdir -p "${plugin_root}"
+
+    mapfile -t top_dirs < <(unzip -Z1 "${zip_source}" | awk -F/ 'NF>1{print $1}' | sort -u)
+
+    need_extract=1
+    if [ "${#top_dirs[@]}" -gt 0 ]; then
+        need_extract=0
+        for dir in "${top_dirs[@]}"; do
+            if [ ! -d "${plugin_root}/${dir}" ]; then
+                need_extract=1
+                break
+            fi
+        done
+    fi
+
+    if [ "${need_extract}" -eq 1 ]; then
+        unzip -qo "${zip_source}" -d "${plugin_root}"
+    fi
+
+    if [ "${cleanup_zip}" -eq 1 ]; then
+        rm -f "${zip_source}"
+    fi
+
+    chown -R www-data:www-data "${plugin_root}"
+}
+
 mysql_args() {
     local host="${WORDPRESS_DB_HOST}"
     local port=""
@@ -358,6 +406,7 @@ ensure_redis_config
 install_oxygen_plugin
 install_contact_form_7_plugin
 install_redis_cache_plugin
+install_aiowpm_plugin
 import_db_if_empty
 
 exec "$@"

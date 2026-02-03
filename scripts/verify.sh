@@ -102,6 +102,13 @@ else
     echo "Contact Form 7 zip not found, skipping Contact Form 7 checks."
 fi
 
+if [ -f "${PROJECT_DIR}/all-in-one-wp-migration-unlimited-main.zip" ]; then
+    "${DC[@]}" exec -T wordpress test -f /opt/plugins/all-in-one-wp-migration-unlimited-main.zip
+    "${DC[@]}" exec -T wordpress test -d /var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-main
+else
+    echo "All-in-One WP Migration zip not found, skipping its checks."
+fi
+
 echo "Checking Redis extension..."
 redis_ext="$("${DC[@]}" exec -T wordpress php -r "echo extension_loaded('redis') ? 'yes' : 'no';")"
 if [ "${redis_ext}" != "yes" ]; then
@@ -144,6 +151,24 @@ if [ -f "${PROJECT_DIR}/contact-form-7.6.1.4.zip" ]; then
     fi
 else
     echo "Skipping Contact Form 7 activation check (zip missing)."
+fi
+
+echo "Checking All-in-One WP Migration activation..."
+if [ -f "${PROJECT_DIR}/all-in-one-wp-migration-unlimited-main.zip" ]; then
+    aiowpm_file="${AIOWPM_PLUGIN_FILE:-all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration-unlimited-main.php}"
+    aiowpm_exists="$("${DC[@]}" exec -T wordpress bash -lc "test -f /var/www/html/wp-content/plugins/${aiowpm_file} && echo yes || echo no")"
+    if [ "${aiowpm_exists}" = "yes" ]; then
+        aiowpm_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('${aiowpm_file}') ? 'active' : 'inactive';")"
+        if [ "${aiowpm_active}" != "active" ]; then
+            echo "All-in-One WP Migration plugin is not active."
+            exit 1
+        fi
+    else
+        echo "All-in-One WP Migration plugin file not found (${aiowpm_file})."
+        exit 1
+    fi
+else
+    echo "Skipping All-in-One WP Migration activation check (zip missing)."
 fi
 
 echo "Checking Redis Cache activation..."

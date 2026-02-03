@@ -17,6 +17,12 @@ function moinho_novo_activate_required_plugins(): void
         'redis-cache/redis-cache.php',
     ];
 
+    $aiowpm = getenv('AIOWPM_PLUGIN_FILE');
+    if (!is_string($aiowpm) || trim($aiowpm) === '') {
+        $aiowpm = 'all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration-unlimited-main.php';
+    }
+    $required[] = $aiowpm;
+
     if (!function_exists('is_plugin_active')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }

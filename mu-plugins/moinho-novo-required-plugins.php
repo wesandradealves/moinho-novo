@@ -17,11 +17,11 @@ function moinho_novo_activate_required_plugins(): void
         'redis-cache/redis-cache.php',
     ];
 
-    $aiowpm = getenv('AIOWPM_PLUGIN_FILE');
-    if (!is_string($aiowpm) || trim($aiowpm) === '') {
-        $aiowpm = 'all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration-unlimited-main.php';
+    $wp_optimize = getenv('WP_OPTIMIZE_PLUGIN_FILE');
+    if (!is_string($wp_optimize) || trim($wp_optimize) === '') {
+        $wp_optimize = 'wp-optimize/wp-optimize.php';
     }
-    $required[] = $aiowpm;
+    $required[] = $wp_optimize;
 
     if (!function_exists('is_plugin_active')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -31,6 +31,14 @@ function moinho_novo_activate_required_plugins(): void
         $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
         if (!file_exists($plugin_path)) {
             continue;
+        }
+
+        if (strpos($plugin_file, 'all-in-one-wp-migration') !== false) {
+            $plugin_dir = dirname($plugin_path);
+            $vendor_file = $plugin_dir . '/lib/vendor/bandar/bandar/lib/Bandar.php';
+            if (!file_exists($vendor_file)) {
+                continue;
+            }
         }
 
         if (!is_plugin_active($plugin_file)) {

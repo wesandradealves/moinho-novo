@@ -109,6 +109,13 @@ else
     echo "All-in-One WP Migration zip not found, skipping its checks."
 fi
 
+if [ -f "${PROJECT_DIR}/wp-optimize.4.4.1.zip" ]; then
+    "${DC[@]}" exec -T wordpress test -f /opt/plugins/wp-optimize.zip
+    "${DC[@]}" exec -T wordpress test -d /var/www/html/wp-content/plugins/wp-optimize
+else
+    echo "WP-Optimize zip not found, skipping its checks."
+fi
+
 echo "Checking Redis extension..."
 redis_ext="$("${DC[@]}" exec -T wordpress php -r "echo extension_loaded('redis') ? 'yes' : 'no';")"
 if [ "${redis_ext}" != "yes" ]; then
@@ -153,22 +160,24 @@ else
     echo "Skipping Contact Form 7 activation check (zip missing)."
 fi
 
-echo "Checking All-in-One WP Migration activation..."
-if [ -f "${PROJECT_DIR}/all-in-one-wp-migration-unlimited-main.zip" ]; then
-    aiowpm_file="${AIOWPM_PLUGIN_FILE:-all-in-one-wp-migration-unlimited-main/all-in-one-wp-migration-unlimited-main.php}"
-    aiowpm_exists="$("${DC[@]}" exec -T wordpress bash -lc "test -f /var/www/html/wp-content/plugins/${aiowpm_file} && echo yes || echo no")"
-    if [ "${aiowpm_exists}" = "yes" ]; then
-        aiowpm_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('${aiowpm_file}') ? 'active' : 'inactive';")"
-        if [ "${aiowpm_active}" != "active" ]; then
-            echo "All-in-One WP Migration plugin is not active."
+echo "Skipping All-in-One WP Migration activation check (manual activation)."
+
+echo "Checking WP-Optimize activation..."
+if [ -f "${PROJECT_DIR}/wp-optimize.4.4.1.zip" ]; then
+    wp_optimize_file="${WP_OPTIMIZE_PLUGIN_FILE:-wp-optimize/wp-optimize.php}"
+    wp_optimize_exists="$("${DC[@]}" exec -T wordpress bash -lc "test -f /var/www/html/wp-content/plugins/${wp_optimize_file} && echo yes || echo no")"
+    if [ "${wp_optimize_exists}" = "yes" ]; then
+        wp_optimize_active="$("${DC[@]}" exec -T wordpress php -r "require '/var/www/html/wp-load.php'; require_once ABSPATH.'wp-admin/includes/plugin.php'; echo is_plugin_active('${wp_optimize_file}') ? 'active' : 'inactive';")"
+        if [ "${wp_optimize_active}" != "active" ]; then
+            echo "WP-Optimize plugin is not active."
             exit 1
         fi
     else
-        echo "All-in-One WP Migration plugin file not found (${aiowpm_file})."
+        echo "WP-Optimize plugin file not found (${wp_optimize_file})."
         exit 1
     fi
 else
-    echo "Skipping All-in-One WP Migration activation check (zip missing)."
+    echo "Skipping WP-Optimize activation check (zip missing)."
 fi
 
 echo "Checking Redis Cache activation..."

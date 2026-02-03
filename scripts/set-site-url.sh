@@ -85,3 +85,14 @@ if (!file_exists($htaccess)) {
 }
 '
 
+# Normaliza URLs do Oxygen (uploads/oxygen/css) para paths relativos,
+# garantindo funcionamento tanto em localhost quanto ngrok.
+"${DC[@]}" exec -T wordpress bash -lc '
+set -e
+CSS_DIR="/var/www/html/wp-content/uploads/oxygen/css"
+if [ -d "${CSS_DIR}" ]; then
+    find "${CSS_DIR}" -type f -name "*.css" -print0 | xargs -0 sed -i -E \
+        -e "s#https?://[^/]+/wp-content/uploads#/wp-content/uploads#g" \
+        -e "s#//[^/]+/wp-content/uploads#/wp-content/uploads#g"
+fi
+'

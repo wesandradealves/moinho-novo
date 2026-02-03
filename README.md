@@ -21,6 +21,8 @@ no mesmo passo se voce fornecer o link direto do ZIP.
    - Defina `NGROK_AUTHTOKEN` no `.env`.
    - Rode `./scripts/ngrok.sh` para criar o tunnel e atualizar `home`/`siteurl`.
    - A URL publica aparece no terminal.
+6) Para voltar ao ambiente local depois do Ngrok:
+   - `./scripts/set-site-url.sh http://localhost:8080`
 
 ## Observacoes
 - Se o volume `wp-data` ja existir, o conteudo nao sera recopiado. Para forcar, remova o volume.
@@ -36,6 +38,9 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 - Se o banco estiver vazio, o entrypoint importa automaticamente `db.sql` e faz flush de permalinks.
 - Se ainda nao houver templates do Oxygen, o site usa o tema `moinho-novo` automaticamente (fallback via MU plugin). Assim que houver templates/ct_builder_json, o Oxygen assume o render.
 - O script `scripts/ngrok.sh` atualiza `home`/`siteurl` e ajusta o cache do WP-Optimize para o dominio do Ngrok.
+- O script `scripts/set-site-url.sh` alterna a URL do site e ajusta Oxygen/WP-Optimize sem quebrar os assets.
+- O MU plugin `moinho-novo-proxy-ssl.php` evita loop de HTTPS quando acessado via proxy (ngrok).
+- O MU plugin `moinho-novo-dynamic-urls.php` garante que localhost e ngrok funcionem ao mesmo tempo (URLs dinamicas).
 
 ## Healthchecks e testes
 - O `docker-compose.yml` inclui healthcheck do WordPress (wp-login).

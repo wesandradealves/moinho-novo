@@ -20,6 +20,8 @@ fi
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${PROJECT_DIR}"
 
+OLD_URL="$("${DC[@]}" exec -T wordpress php -r "require \"/var/www/html/wp-load.php\"; echo get_option(\"home\");")"
+
 "${DC[@]}" exec -T -e TARGET_URL="${TARGET_URL}" wordpress php -r '
 require "/var/www/html/wp-load.php";
 
@@ -84,6 +86,44 @@ if (!file_exists($htaccess)) {
     file_put_contents($htaccess, $rules);
 }
 '
+
+# Sincroniza URLs no banco (conteudo/oxygen) para evitar mixed content no ngrok.
+if [ -n "${OLD_URL}" ] && [ "${OLD_URL}" != "${TARGET_URL}" ]; then
+    OLD_HOST="$(php -r "echo parse_url(\"${OLD_URL}\", PHP_URL_HOST) ?: \"\";")"
+    OLD_PORT="$(php -r "echo parse_url(\"${OLD_URL}\", PHP_URL_PORT) ?: \"\";")"
+    if [ -n "${OLD_HOST}" ]; then
+        OLD_ORIGIN="${OLD_HOST}"
+        if [ -n "${OLD_PORT}" ]; then
+            OLD_ORIGIN="${OLD_ORIGIN}:${OLD_PORT}"
+        fi
+        OLD_HTTP="http://${OLD_ORIGIN}"
+        OLD_HTTPS="https://${OLD_ORIGIN}"
+        NEW_HOST="$(php -r "echo parse_url(\"${TARGET_URL}\", PHP_URL_HOST) ?: \"\";")"
+        NEW_PORT="$(php -r "echo parse_url(\"${TARGET_URL}\", PHP_URL_PORT) ?: \"\";")"
+        NEW_ORIGIN="${NEW_HOST}"
+        if [ -n "${NEW_PORT}" ]; then
+            NEW_ORIGIN="${NEW_ORIGIN}:${NEW_PORT}"
+        fi
+        NEW_HTTP="http://${NEW_ORIGIN}"
+        NEW_HTTPS="https://${NEW_ORIGIN}"
+
+        "${DC[@]}" exec -T wordpress bash -lc '
+set -e
+WP=/tmp/wp-cli.phar
+if ! command -v wp >/dev/null 2>&1; then
+    if [ ! -f "${WP}" ]; then
+        curl -fsSL -o "${WP}" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        chmod +x "${WP}"
+    fi
+    WP_CMD=(php "${WP}")
+else
+    WP_CMD=(wp)
+fi
+"${WP_CMD[@]}" --path=/var/www/html search-replace "'"${OLD_HTTP}"'" "'"${NEW_HTTP}"'" --skip-columns=guid --all-tables-with-prefix || true
+"${WP_CMD[@]}" --path=/var/www/html search-replace "'"${OLD_HTTPS}"'" "'"${NEW_HTTPS}"'" --skip-columns=guid --all-tables-with-prefix || true
+'
+    fi
+fi
 
 # Normaliza URLs do Oxygen (uploads/oxygen/css) para paths relativos,
 # garantindo funcionamento tanto em localhost quanto ngrok.

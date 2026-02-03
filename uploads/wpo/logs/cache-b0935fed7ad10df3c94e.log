@@ -1,1 +1,7 @@
 [2026-02-03 03:03:37 : INFO] - Pruning the Cache log file 
+[2026-02-03 03:36:28 : INFO] - Cache for URL: http://localhost:8080/?ct_template=9 has been purged, triggered by action: save_post 
+[2026-02-03 03:36:28 : INFO] - Cache for archive page associated with post_type: ct_template and Title: "Home" has been purged, triggered by action: save_post 
+[2026-02-03 03:36:52 : INFO] - Cache for URL: http://localhost:8080/?ct_template=9 has been purged, triggered by action: save_post 
+[2026-02-03 03:36:52 : INFO] - Cache for archive page associated with post_type: ct_template and Title: "Home" has been purged, triggered by action: save_post 
+[2026-02-03 03:40:31 : INFO] - Cache for URL: http://localhost:8080/?ct_template=9 has been purged, triggered by action: save_post 
+[2026-02-03 03:40:31 : INFO] - Cache for archive page associated with post_type: ct_template and Title: "Home" has been purged, triggered by action: save_post 

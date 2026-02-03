@@ -97,6 +97,19 @@ services:
       retries: 10
       start_period: 30s
 
+  ngrok:
+    image: ngrok/ngrok:latest
+    profiles: ["ngrok"]
+    restart: unless-stopped
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN:?}
+    command: ["http", "wordpress:80"]
+    ports:
+      - "4040:4040"
+
 volumes:
   db-data:
   wp-data:

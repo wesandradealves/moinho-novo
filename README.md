@@ -17,6 +17,10 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 3) Suba os containers:
    - `docker compose up -d --build`
 4) Abra `http://localhost:8080` (ou a porta configurada) e finalize a instalacao do WordPress.
+5) (Opcional) Exponha o ambiente local via Ngrok:
+   - Defina `NGROK_AUTHTOKEN` no `.env`.
+   - Rode `./scripts/ngrok.sh` para criar o tunnel e atualizar `home`/`siteurl`.
+   - A URL publica aparece no terminal.
 
 ## Observacoes
 - Se o volume `wp-data` ja existir, o conteudo nao sera recopiado. Para forcar, remova o volume.
@@ -31,6 +35,7 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 - O plugin Redis Cache e baixado automaticamente no primeiro boot (ou voce pode fornecer `REDIS_CACHE_ZIP_URL`).
 - Se o banco estiver vazio, o entrypoint importa automaticamente `db.sql` e faz flush de permalinks.
 - Se ainda nao houver templates do Oxygen, o site usa o tema `moinho-novo` automaticamente (fallback via MU plugin). Assim que houver templates/ct_builder_json, o Oxygen assume o render.
+- O script `scripts/ngrok.sh` atualiza `home`/`siteurl` e ajusta o cache do WP-Optimize para o dominio do Ngrok.
 
 ## Healthchecks e testes
 - O `docker-compose.yml` inclui healthcheck do WordPress (wp-login).

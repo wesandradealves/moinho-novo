@@ -1,0 +1,133 @@
+[2026-02-03 01:54:50 : INFO] - Re_Smush_It_Task server status: Online 
+[2026-02-03 01:55:03 : INFO] - A total of 19 tasks of type smush found and will be processed in this iteration 
+[2026-02-03 01:55:03 : DEBUG] - Lock option (updraft_lock_smush, wp_options) was created in the database 
+[2026-02-03 01:55:03 : INFO] - Lock (updraft_lock_smush, wp_options) acquired after initialising the database 
+[2026-02-03 01:55:03 : INFO] - Processing task with ID : 1, and type 'smush' 
+[2026-02-03 01:55:03 : INFO] - Re_Smush_It_Task - Attachment ID : 10, Started on : February 03, 2026 01:54:50 
+[2026-02-03 01:55:03 : INFO] - File: Group-7.png, Compression quality: 92 
+[2026-02-03 01:55:05 : INFO] - Backing up the original image - 2026/02/Group-7-updraft-pre-smush-original.png 
+[2026-02-03 01:55:08 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-7.png.The file was compressed from 6.24 KB to 2.84 KB, saving 54.47 percent, using WP-Optimize 
+[2026-02-03 01:55:09 : INFO] - Completed processing task with ID : 1, and type 'smush' 
+[2026-02-03 01:55:09 : INFO] - Processing task with ID : 2, and type 'smush' 
+[2026-02-03 01:55:09 : INFO] - Re_Smush_It_Task - Attachment ID : 11, Started on : February 03, 2026 01:54:53 
+[2026-02-03 01:55:09 : INFO] - File: family-enjoy-outdoor-field-lifestyle_02-1.jpg, Compression quality: 92 
+[2026-02-03 01:55:31 : INFO] - Backing up the original image - 2026/02/family-enjoy-outdoor-field-lifestyle_02-1-updraft-pre-smush-original.jpg 
+[2026-02-03 01:55:39 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/family-enjoy-outdoor-field-lifestyle_02-1.jpg.The file was compressed from 1.11 MB to 238.70 KB, saving 79.09 percent, using WP-Optimize 
+[2026-02-03 01:55:39 : INFO] - Completed processing task with ID : 2, and type 'smush' 
+[2026-02-03 01:55:40 : INFO] - Processing task with ID : 3, and type 'smush' 
+[2026-02-03 01:55:40 : INFO] - Re_Smush_It_Task - Attachment ID : 76, Started on : February 03, 2026 01:54:53 
+[2026-02-03 01:55:40 : INFO] - File: Group-48.png, Compression quality: 92 
+[2026-02-03 01:55:41 : INFO] - Backing up the original image - 2026/02/Group-48-updraft-pre-smush-original.png 
+[2026-02-03 01:55:43 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-48.png.The file was compressed from 6.63 KB to 3.08 KB, saving 53.58 percent, using WP-Optimize 
+[2026-02-03 01:55:43 : INFO] - Completed processing task with ID : 3, and type 'smush' 
+[2026-02-03 01:55:43 : INFO] - Processing task with ID : 4, and type 'smush' 
+[2026-02-03 01:55:43 : INFO] - Re_Smush_It_Task - Attachment ID : 78, Started on : February 03, 2026 01:54:54 
+[2026-02-03 01:55:43 : INFO] - File: Mask-group.jpg, Compression quality: 92 
+[2026-02-03 01:55:48 : INFO] - Backing up the original image - 2026/02/Mask-group-updraft-pre-smush-original.jpg 
+[2026-02-03 01:55:50 : INFO] - A total of 16 tasks of type smush found and will be processed in this iteration 
+[2026-02-03 01:55:51 : DEBUG] - Lock option (updraft_lock_smush, wp_options) already existed in the database 
+[2026-02-03 01:55:51 : INFO] - Lock (updraft_lock_smush, wp_options) could not be acquired (it is locked) 
+[2026-02-03 01:55:51 : INFO] - Failed to gain semaphore lock (smush) - another process is already processing the queue - aborting (if this is wrong - i.e. if the other process crashed without removing the lock, then another can be started after 1 minute 
+[2026-02-03 01:55:51 : INFO] - Cleaning up tasks of type (smush). A total of 3 tasks will be deleted. 
+[2026-02-03 01:55:57 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Mask-group.jpg.The file was compressed from 930.24 KB to 223.39 KB, saving 75.99 percent, using WP-Optimize 
+[2026-02-03 01:55:57 : INFO] - Completed processing task with ID : 4, and type 'smush' 
+[2026-02-03 01:55:57 : INFO] - Processing task with ID : 5, and type 'smush' 
+[2026-02-03 01:55:57 : INFO] - Re_Smush_It_Task - Attachment ID : 79, Started on : February 03, 2026 01:54:55 
+[2026-02-03 01:55:57 : INFO] - File: Group-44.png, Compression quality: 92 
+[2026-02-03 01:55:59 : INFO] - Backing up the original image - 2026/02/Group-44-updraft-pre-smush-original.png 
+[2026-02-03 01:56:09 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-44.png.The file was compressed from 78.33 KB to 33.03 KB, saving 57.83 percent, using WP-Optimize 
+[2026-02-03 01:56:09 : INFO] - Completed processing task with ID : 5, and type 'smush' 
+[2026-02-03 01:56:09 : INFO] - Processing task with ID : 6, and type 'smush' 
+[2026-02-03 01:56:09 : INFO] - Re_Smush_It_Task - Attachment ID : 80, Started on : February 03, 2026 01:54:55 
+[2026-02-03 01:56:09 : INFO] - File: Group-8.png, Compression quality: 92 
+[2026-02-03 01:56:11 : INFO] - Backing up the original image - 2026/02/Group-8-updraft-pre-smush-original.png 
+[2026-02-03 01:56:14 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-8.png.The file was compressed from 33.93 KB to 11.29 KB, saving 66.71 percent, using WP-Optimize 
+[2026-02-03 01:56:14 : INFO] - Completed processing task with ID : 6, and type 'smush' 
+[2026-02-03 01:56:14 : INFO] - Processing task with ID : 7, and type 'smush' 
+[2026-02-03 01:56:14 : INFO] - Re_Smush_It_Task - Attachment ID : 81, Started on : February 03, 2026 01:54:56 
+[2026-02-03 01:56:14 : INFO] - File: Mask-group-1.jpg, Compression quality: 92 
+[2026-02-03 01:56:18 : INFO] - Backing up the original image - 2026/02/Mask-group-1-updraft-pre-smush-original.jpg 
+[2026-02-03 01:56:21 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Mask-group-1.jpg.The file was compressed from 297.74 KB to 90.29 KB, saving 69.68 percent, using WP-Optimize 
+[2026-02-03 01:56:21 : INFO] - Completed processing task with ID : 7, and type 'smush' 
+[2026-02-03 01:56:21 : INFO] - Processing task with ID : 8, and type 'smush' 
+[2026-02-03 01:56:21 : INFO] - Re_Smush_It_Task - Attachment ID : 84, Started on : February 03, 2026 01:54:57 
+[2026-02-03 01:56:21 : INFO] - File: Mask-group-2.jpg, Compression quality: 92 
+[2026-02-03 01:56:23 : INFO] - Backing up the original image - 2026/02/Mask-group-2-updraft-pre-smush-original.jpg 
+[2026-02-03 01:56:27 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Mask-group-2.jpg.The file was compressed from 110.22 KB to 29.90 KB, saving 72.87 percent, using WP-Optimize 
+[2026-02-03 01:56:27 : INFO] - Completed processing task with ID : 8, and type 'smush' 
+[2026-02-03 01:56:27 : INFO] - Processing task with ID : 9, and type 'smush' 
+[2026-02-03 01:56:27 : INFO] - Re_Smush_It_Task - Attachment ID : 85, Started on : February 03, 2026 01:54:57 
+[2026-02-03 01:56:27 : INFO] - File: Group-10.png, Compression quality: 92 
+[2026-02-03 01:56:29 : INFO] - Backing up the original image - 2026/02/Group-10-updraft-pre-smush-original.png 
+[2026-02-03 01:56:30 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-10.png.The file was compressed from 4.10 KB to 1.90 KB, saving 53.61 percent, using WP-Optimize 
+[2026-02-03 01:56:30 : INFO] - Completed processing task with ID : 9, and type 'smush' 
+[2026-02-03 01:56:31 : INFO] - Processing task with ID : 10, and type 'smush' 
+[2026-02-03 01:56:31 : INFO] - Re_Smush_It_Task - Attachment ID : 86, Started on : February 03, 2026 01:54:58 
+[2026-02-03 01:56:31 : INFO] - File: Group-11.png, Compression quality: 92 
+[2026-02-03 01:56:33 : INFO] - Backing up the original image - 2026/02/Group-11-updraft-pre-smush-original.png 
+[2026-02-03 01:56:35 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-11.png.The file was compressed from 1.09 KB to 566 bytes, saving 49.42 percent, using WP-Optimize 
+[2026-02-03 01:56:35 : INFO] - Completed processing task with ID : 10, and type 'smush' 
+[2026-02-03 01:56:35 : INFO] - Processing task with ID : 11, and type 'smush' 
+[2026-02-03 01:56:35 : INFO] - Re_Smush_It_Task - Attachment ID : 87, Started on : February 03, 2026 01:54:58 
+[2026-02-03 01:56:35 : INFO] - File: Group-12.png, Compression quality: 92 
+[2026-02-03 01:56:37 : INFO] - Backing up the original image - 2026/02/Group-12-updraft-pre-smush-original.png 
+[2026-02-03 01:56:39 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-12.png.The file was compressed from 3.57 KB to 1.54 KB, saving 57 percent, using WP-Optimize 
+[2026-02-03 01:56:39 : INFO] - Completed processing task with ID : 11, and type 'smush' 
+[2026-02-03 01:56:39 : INFO] - Processing task with ID : 12, and type 'smush' 
+[2026-02-03 01:56:39 : INFO] - Re_Smush_It_Task - Attachment ID : 88, Started on : February 03, 2026 01:54:59 
+[2026-02-03 01:56:39 : INFO] - File: Mask-group-3.jpg, Compression quality: 92 
+[2026-02-03 01:56:42 : INFO] - Backing up the original image - 2026/02/Mask-group-3-updraft-pre-smush-original.jpg 
+[2026-02-03 01:56:45 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Mask-group-3.jpg.The file was compressed from 172.31 KB to 38.93 KB, saving 77.41 percent, using WP-Optimize 
+[2026-02-03 01:56:45 : INFO] - Completed processing task with ID : 12, and type 'smush' 
+[2026-02-03 01:56:45 : INFO] - Processing task with ID : 13, and type 'smush' 
+[2026-02-03 01:56:45 : INFO] - Re_Smush_It_Task - Attachment ID : 91, Started on : February 03, 2026 01:54:59 
+[2026-02-03 01:56:45 : INFO] - File: Mask-group-4.jpg, Compression quality: 92 
+[2026-02-03 01:56:51 : INFO] - A total of 7 tasks of type smush found and will be processed in this iteration 
+[2026-02-03 01:56:51 : DEBUG] - Lock option (updraft_lock_smush, wp_options) already existed in the database 
+[2026-02-03 01:56:51 : INFO] - Lock (updraft_lock_smush, wp_options) could not be acquired (it is locked) 
+[2026-02-03 01:56:51 : INFO] - Failed to gain semaphore lock (smush) - another process is already processing the queue - aborting (if this is wrong - i.e. if the other process crashed without removing the lock, then another can be started after 1 minute 
+[2026-02-03 01:56:51 : INFO] - Cleaning up tasks of type (smush). A total of 9 tasks will be deleted. 
+[2026-02-03 01:56:55 : INFO] - Task with ID 13 and type (smush) failed with error code http_request_failed - cURL error 28: Connection timed out after 10002 milliseconds 
+[2026-02-03 01:56:55 : INFO] - Cannot establish connection with reSmush.it webservice. Please try later 
+[2026-02-03 01:57:03 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Mask-group-4.jpg.The file was compressed from 452.97 KB to 452.97 KB, saving 0 percent, using WP-Optimize 
+[2026-02-03 01:57:03 : INFO] - Completed processing task with ID : 13, and type 'smush' 
+[2026-02-03 01:57:03 : INFO] - Processing task with ID : 14, and type 'smush' 
+[2026-02-03 01:57:03 : INFO] - Re_Smush_It_Task - Attachment ID : 92, Started on : February 03, 2026 01:55:00 
+[2026-02-03 01:57:03 : INFO] - File: Layer_1.png, Compression quality: 92 
+[2026-02-03 01:57:05 : INFO] - Backing up the original image - 2026/02/Layer_1-updraft-pre-smush-original.png 
+[2026-02-03 01:57:10 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Layer_1.png.The file was compressed from 13.99 KB to 5.67 KB, saving 59.48 percent, using WP-Optimize 
+[2026-02-03 01:57:10 : INFO] - Completed processing task with ID : 14, and type 'smush' 
+[2026-02-03 01:57:10 : INFO] - Processing task with ID : 15, and type 'smush' 
+[2026-02-03 01:57:10 : INFO] - Re_Smush_It_Task - Attachment ID : 93, Started on : February 03, 2026 01:55:00 
+[2026-02-03 01:57:10 : INFO] - File: Group-16.png, Compression quality: 92 
+[2026-02-03 01:57:12 : INFO] - Backing up the original image - 2026/02/Group-16-updraft-pre-smush-original.png 
+[2026-02-03 01:57:16 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-16.png.The file was compressed from 33.21 KB to 12.58 KB, saving 62.1 percent, using WP-Optimize 
+[2026-02-03 01:57:16 : INFO] - Completed processing task with ID : 15, and type 'smush' 
+[2026-02-03 01:57:16 : INFO] - Processing task with ID : 16, and type 'smush' 
+[2026-02-03 01:57:16 : INFO] - Re_Smush_It_Task - Attachment ID : 94, Started on : February 03, 2026 01:55:01 
+[2026-02-03 01:57:16 : INFO] - File: Group-17.png, Compression quality: 92 
+[2026-02-03 01:57:19 : INFO] - Backing up the original image - 2026/02/Group-17-updraft-pre-smush-original.png 
+[2026-02-03 01:57:21 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-17.png.The file was compressed from 5.54 KB to 2.40 KB, saving 56.62 percent, using WP-Optimize 
+[2026-02-03 01:57:21 : INFO] - Completed processing task with ID : 16, and type 'smush' 
+[2026-02-03 01:57:21 : INFO] - Processing task with ID : 17, and type 'smush' 
+[2026-02-03 01:57:21 : INFO] - Re_Smush_It_Task - Attachment ID : 95, Started on : February 03, 2026 01:55:02 
+[2026-02-03 01:57:21 : INFO] - File: Group-18.png, Compression quality: 92 
+[2026-02-03 01:57:23 : INFO] - Backing up the original image - 2026/02/Group-18-updraft-pre-smush-original.png 
+[2026-02-03 01:57:23 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/Group-18.png.The file was compressed from 2.18 KB to 992 bytes, saving 55.52 percent, using WP-Optimize 
+[2026-02-03 01:57:23 : INFO] - Completed processing task with ID : 17, and type 'smush' 
+[2026-02-03 01:57:23 : INFO] - Processing task with ID : 18, and type 'smush' 
+[2026-02-03 01:57:23 : INFO] - Re_Smush_It_Task - Attachment ID : 96, Started on : February 03, 2026 01:55:02 
+[2026-02-03 01:57:23 : INFO] - File: LogoBulldogProjects_Creme-1.png, Compression quality: 92 
+[2026-02-03 01:57:25 : INFO] - Backing up the original image - 2026/02/LogoBulldogProjects_Creme-1-updraft-pre-smush-original.png 
+[2026-02-03 01:57:27 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/LogoBulldogProjects_Creme-1.png.The file was compressed from 12.30 KB to 5.71 KB, saving 53.52 percent, using WP-Optimize 
+[2026-02-03 01:57:27 : INFO] - Completed processing task with ID : 18, and type 'smush' 
+[2026-02-03 01:57:27 : INFO] - Processing task with ID : 19, and type 'smush' 
+[2026-02-03 01:57:27 : INFO] - Re_Smush_It_Task - Attachment ID : 97, Started on : February 03, 2026 01:55:03 
+[2026-02-03 01:57:27 : INFO] - File: 103.png, Compression quality: 92 
+[2026-02-03 01:57:29 : INFO] - Backing up the original image - 2026/02/103-updraft-pre-smush-original.png 
+[2026-02-03 01:57:31 : INFO] - Successfully optimized the image - /var/www/html/wp-content/uploads/2026/02/103.png.The file was compressed from 10.42 KB to 4.98 KB, saving 52.16 percent, using WP-Optimize 
+[2026-02-03 01:57:31 : INFO] - Completed processing task with ID : 19, and type 'smush' 
+[2026-02-03 01:57:31 : INFO] - Lock option (updraft_lock_smush, wp_options) released 
+[2026-02-03 01:57:31 : INFO] - Successfully processed the queue (smush). 19 tasks were processed out of 19. 
+[2026-02-03 01:57:31 : INFO] - Lock option (updraft_lock_smush, wp_options) was deleted from the database 
+[2026-02-03 01:57:31 : INFO] - Cleaning up tasks of type (smush). A total of 7 tasks will be deleted. 

@@ -24,6 +24,10 @@ no mesmo passo se voce fornecer o link direto do ZIP.
 6) Para voltar ao ambiente local depois do Ngrok:
    - `./scripts/set-site-url.sh http://localhost:8080`
 
+## Credenciais de login
+- Usuario: `admin`
+- Senha: `admin`
+
 ## Observacoes
 - Se o volume `wp-data` ja existir, o conteudo nao sera recopiado. Para forcar, remova o volume.
 - O Oxygen e um plugin comercial; o link de download normalmente exige login.

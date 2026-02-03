@@ -7,3 +7,7 @@
 - Montagens em tempo real de `uploads/` e do tema `themes/moinho-novo`.
 - Exposição via Ngrok com scripts para alternar URLs sem quebrar assets.
 - MU-plugins para login, HTTPS atrás de proxy e URLs dinâmicas.
+
+## 1.0.1 - 2026-02-03
+- Adicionado botão “Back to Top” no layout.
+- Atualizado dump do banco e assets gerados pelo Oxygen para refletir a mudança.

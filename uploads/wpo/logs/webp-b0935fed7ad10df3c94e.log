@@ -1,0 +1,3 @@
+[2026-02-03 03:03:32 : INFO] - The queue for tasks of type "webp-convert-compressed-images-task" is empty. Aborting! 
+[2026-02-03 03:03:37 : INFO] - Purging cache because redirection_possible value changed from: false to true 
+[2026-02-03 03:03:37 : INFO] - Pruning the WebP log file 
